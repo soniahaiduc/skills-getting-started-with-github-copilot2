@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const activityTemplate = document.getElementById("activity-template");
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -15,17 +16,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
+        const activityCard = activityTemplate.content.cloneNode(true);
 
-        const spotsLeft = details.max_participants - details.participants.length;
+        activityCard.querySelector(".activity-name").textContent = name;
+        activityCard.querySelector(".activity-description").textContent = details.description;
+        activityCard.querySelector(".activity-schedule").textContent = details.schedule;
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+        const participantsList = activityCard.querySelector(".activity-participants");
+        details.participants.forEach((participant) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = participant;
+          participantsList.appendChild(listItem);
+        });
 
         activitiesList.appendChild(activityCard);
 
